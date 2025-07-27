@@ -8,8 +8,14 @@ import { CreateBookDto } from '../dto/create-book.dto';
 export class BookService {
   constructor(@InjectModel(Book.name) private bookModel: Model<BookDocument>) {}
 
-  async createBook(bookData: Partial<CreateBookDto>): Promise<Book> {
-    const createdBook = new this.bookModel(bookData);
+  async createBook(
+    bookData: Partial<CreateBookDto>,
+    userId: string,
+  ): Promise<Book> {
+    const createdBook = new this.bookModel({
+      ...bookData,
+      owner: userId,
+    });
     return createdBook.save();
   }
   async findAllBooks(): Promise<Book[]> {
