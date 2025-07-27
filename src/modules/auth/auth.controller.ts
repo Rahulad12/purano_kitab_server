@@ -1,16 +1,21 @@
-import { ApiParam } from '@nestjs/swagger';
-import { AuthDto } from '../dto/auth-dto';
-import { User } from '../users/user.schema';
+import {
+  Controller,
+  Post,
+  Body,
+  HttpCode,
+  HttpStatus,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { Body, Controller, Post, HttpCode, HttpStatus } from '@nestjs/common';
+import { AuthDto } from '../dto/auth-dto';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private AuthService: AuthService) {}
+  constructor(private readonly authService: AuthService) {}
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
   async login(@Body() authDto: AuthDto) {
-    return this.AuthService.authUser(authDto);
+    return this.authService.authUser(authDto);
   }
 }
