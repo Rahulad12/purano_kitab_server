@@ -9,7 +9,7 @@ import { UserModule } from '../users/user.module';
     UserModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: '1h' },
+      signOptions: { expiresIn: '1d' },
     }),
   ],
   providers: [AuthService],
