@@ -15,10 +15,10 @@ export class UserController {
     return this.userService.findAllUsers();
   }
 
-  @Post()
-  @ApiBody({ type: CreateUserDto })
-  async createUser(@Body() user: Partial<CreateUserDto>): Promise<User> {
-    this.logger.log('Create user');
-    return this.userService.createUser(user);
-  }
+  // @Post()
+  // @ApiBody({ type: CreateUserDto })
+  // async createUser(@Body() user: Partial<CreateUserDto>): Promise<User> {
+  //   this.logger.log('Create user');
+  //   return this.userService.createUser(user);
+  // }
 }
