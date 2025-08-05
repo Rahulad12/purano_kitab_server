@@ -2,9 +2,10 @@ import { Injectable, UnauthorizedException, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from '../users/user.schema';
 import { Model } from 'mongoose';
-import { AuthDto, AuthResponseDto, CreateUserDto } from '../dto/auth-dto';
+import { AuthDto, AuthResponseDto, CreateUserDto } from '../dto/auth.dto';
 import { JwtService } from '@nestjs/jwt';
 import { GlobalResponseDto } from '../dto/global-response.dto';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
@@ -18,12 +19,14 @@ export class AuthService {
   async registerUser(body: CreateUserDto): Promise<GlobalResponseDto> {
     this.logger.log('Register user');
     const existingUser = await this.userModel.findOne({ email: body.email });
-
     if (existingUser) {
       this.logger.error('User already exists');
       throw new UnauthorizedException('User already exists');
     }
-    await this.userModel.create(body);
+    await this.userModel.create({
+      ...body,
+      password: await bcrypt.hash(body.password, 10),
+    });
     this.logger.log('User created successfully');
     return {
       statusCode: 201,
@@ -38,19 +41,22 @@ export class AuthService {
       this.logger.error('Invalid email or password');
       throw new UnauthorizedException('Invalid email or password');
     }
-
-    const payload = { sub: user._id, email: user.email };
+    const isAuth = await bcrypt.compare(authDto.password, user.password);
+    if (!isAuth) {
+      this.logger.error('Invalid email or password');
+      throw new UnauthorizedException('Invalid email or password');
+    }
+    const payload = { sub: user?._id, email: user?.email };
     const accessToken = this.jwtService.sign(payload);
     this.logger.log('User authenticated and token returned');
-
     return {
       accessToken,
       user: {
-        firstName: user.firstName,
-        secondName: user.LastName,
-        email: user.email,
-        id: user._id.toString(),
-        phoneNumber: user.phoneNumber,
+        firstName: user?.firstName,
+        lastName: user?.LastName,
+        email: user?.email,
+        id: user?._id.toString(),
+        phoneNumber: user?.phoneNumber,
       },
     };
   }
