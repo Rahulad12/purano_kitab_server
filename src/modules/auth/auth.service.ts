@@ -35,15 +35,20 @@ export class AuthService {
   }
 
   async authUser(authDto: AuthDto): Promise<AuthResponseDto> {
+    console.log({authDto})
     this.logger.log('Auth user');
     const user = await this.userModel.findOne({ email: authDto.email });
+    console.log(user)
     if (!user) {
-      this.logger.error('Invalid email or password');
+      this.logger.error('user not found');
       throw new UnauthorizedException('Invalid email or password');
     }
-    const isAuth = await bcrypt.compare(authDto.password, user.password);
+  console.log(user.password === authDto.password,'ismatched')
+  const isAuth = user.password === authDto.password
+    // const isAuth = await bcrypt.compare(authDto.password, user.password);
+    console.log(isAuth)
     if (!isAuth) {
-      this.logger.error('Invalid email or password');
+      this.logger.error('Invalid password');
       throw new UnauthorizedException('Invalid email or password');
     }
     const payload = { sub: user?._id, email: user?.email };

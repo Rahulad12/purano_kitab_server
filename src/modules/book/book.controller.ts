@@ -6,6 +6,7 @@ import {
   Logger,
   Param,
   Post,
+  Query,
   Req,
   Request,
 } from '@nestjs/common';
@@ -20,8 +21,11 @@ export class BookController {
   constructor(private readonly bookService: BookService) {}
 
   @Get()
-  getAllBooks(): Promise<Book[]> {
-    return this.bookService.findAllBooks();
+  getAllBooks(
+    @Query('pageLimit') pageLimit: number = 2,
+    @Query('page') page: number = 1,
+  ): Promise<Book[]> {
+    return this.bookService.findAllBooks(pageLimit, page);
   }
 
   @Get(':id')
