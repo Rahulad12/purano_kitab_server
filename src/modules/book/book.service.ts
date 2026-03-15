@@ -24,15 +24,29 @@ export class BookService {
       throw new Error('Book not created');
     }
     this.logger.log('Book created successfully');
-    return createdBook.save();
+    const savedBook = await createdBook.save();
+    return savedBook;
   }
-  async findAllBooks(): Promise<Book[]> {
+  async findAllBooks(pageLimit: number, page: number): Promise<Book[]> {
     this.logger.log('Get all books');
-    return this.bookModel.find().exec();
+    return this.bookModel
+      .find()
+      .populate({
+        path: 'owner',
+        select: 'name email',
+      })
+      .limit(pageLimit)
+      .skip((page - 1) * pageLimit)
+      .exec();
   }
   async findBookById(bookId: string): Promise<Book | null> {
     this.logger.log(`Get book by id ${bookId}`);
     return this.bookModel.findById(bookId).exec();
+  }
+
+  async findAllBookByUserId(userId: string): Promise<Book[]> {
+    this.logger.log(`Get all books by user id ${userId}`);
+    return this.bookModel.find({ owner: userId }).exec();
   }
 
   async deleteBookById(bookId: string): Promise<Book | null> {
@@ -40,3 +54,4 @@ export class BookService {
     return this.bookModel.findByIdAndDelete(bookId).exec();
   }
 }
+

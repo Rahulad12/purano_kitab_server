@@ -8,7 +8,7 @@ async function bootstrap() {
       prefix: 'Purano Kitab',
     }),
   });
-
+  app.enableCors();
   app.setGlobalPrefix('api/v1');
 
   const config = new DocumentBuilder()

@@ -13,10 +13,12 @@ export class Book {
     ref: User.name,
     required: true,
   })
-  owner: User;
+  owner: mongoose.Types.ObjectId;
   @Prop() title: string;
   @Prop() author: string;
   @Prop() description: string;
+  @Prop() price: string;
+  @Prop() image_url: string;
   @Prop({
     type: Boolean,
     default: true,

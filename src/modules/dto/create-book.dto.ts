@@ -7,4 +7,8 @@ export class CreateBookDto {
   author: string;
   @ApiProperty()
   description: string;
+  @ApiProperty()
+  price: string;
+  @ApiProperty()
+  image_url: string;
 }

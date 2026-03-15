@@ -6,6 +6,7 @@ import {
   Logger,
   Param,
   Post,
+  Query,
   Req,
   Request,
 } from '@nestjs/common';
@@ -20,13 +21,27 @@ export class BookController {
   constructor(private readonly bookService: BookService) {}
 
   @Get()
-  getAllBooks(): Promise<Book[]> {
-    return this.bookService.findAllBooks();
+  getAllBooks(
+    @Query('pageLimit') pageLimit: number = 100,
+    @Query('page') page: number = 1,
+  ): Promise<Book[]> {
+    return this.bookService.findAllBooks(pageLimit, page);
+  }
+  
+  @Get('/user')
+  async findAllBookByUserId(@Request() req: any) {
+    const userId = req.user.sub;
+    const books = await this.bookService.findAllBookByUserId(userId);
+    return {
+      success: true,
+      message: 'Books fetched successfully',
+      books: books,
+    }
   }
 
   @Get(':id')
   @ApiParam({ name: 'id', description: 'Book ID to get' })
-  getBooksById(@Param('id') userId: string): Promise<Book | null> {
+  async getBooksById(@Param('id') userId: string): Promise<Book | null> {
     return this.bookService.findBookById(userId);
   }
 
@@ -34,12 +49,16 @@ export class BookController {
   @ApiBody({
     type: CreateBookDto,
   })
-  createBook(
+  async createBook(
     @Request() req: any,
     @Body() bookData: Partial<CreateBookDto>,
-  ): Promise<Book> {
+  ) {
     const userId = req.user.sub;
-    return this.bookService.createBook(bookData, userId);
+    await this.bookService.createBook(bookData, userId);
+    return {
+      message: 'Book created successfully',
+      success: true,
+    };
   }
 
   @Delete(':id')
