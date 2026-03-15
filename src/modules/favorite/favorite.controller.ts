@@ -13,6 +13,7 @@ export class FavoriteController {
     this.logger.log(`Save book as favorite ${bookId} by user ${req.user.sub}`);
     const userId = req.user.sub;
     await this.FavoriteService.saveBookAsFavorite(bookId, userId);
+    
     return {
       success: true,
       message: 'Book Saved As Favorite',
