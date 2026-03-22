@@ -41,8 +41,8 @@ export class AuthService {
       this.logger.error('user not found');
       throw new UnauthorizedException('Invalid email or password');
     }
-  const isAuth = user.password === authDto.password
-    // const isAuth = await bcrypt.compare(authDto.password, user.password);
+  // const isAuth = user.password === authDto.password
+    const isAuth = await bcrypt.compare(authDto.password, user.password);
     if (!isAuth) {
       this.logger.error('Invalid password');
       throw new UnauthorizedException('Invalid email or password');
