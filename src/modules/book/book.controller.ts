@@ -65,6 +65,12 @@ export class BookController {
     @Body() bookData: Partial<CreateBookDto>,
   ) {
     const userId = req.user.sub;
+    if (!bookData) {
+      return {
+        message: 'All Fields are Required',
+        success: false,
+      };
+    }
     await this.bookService.createBook(bookData, userId);
     return {
       message: 'Book created successfully',
