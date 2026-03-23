@@ -5,8 +5,6 @@ import { Model } from 'mongoose';
 import {
   AuthDto,
   AuthResponseDto,
-  ChangeEmailDto,
-  ChangePasswordDto,
   CreateUserDto,
 } from '../dto/auth.dto';
 import { JwtService } from '@nestjs/jwt';
