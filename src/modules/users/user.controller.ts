@@ -1,8 +1,23 @@
-import { Body, Controller, Get, Post, Logger, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Logger,
+  UseGuards,
+  HttpCode,
+  Request,
+  HttpStatus,
+  ValidationPipe,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from './user.schema';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
-import { CreateUserDto } from '../dto/create-user.dto';
+import {
+  ChangeEmailDto,
+  ChangePasswordDto,
+  CreateUserDto,
+} from '../dto/create-user.dto';
 ApiTags('Users');
 @Controller('users')
 export class UserController {
@@ -15,10 +30,21 @@ export class UserController {
     return this.userService.findAllUsers();
   }
 
-  // @Post()
-  // @ApiBody({ type: CreateUserDto })
-  // async createUser(@Body() user: Partial<CreateUserDto>): Promise<User> {
-  //   this.logger.log('Create user');
-  //   return this.userService.createUser(user);
-  // }
+  @Post('change-password')
+  @HttpCode(HttpStatus.OK)
+  async changePassword(
+    @Body(ValidationPipe) changePasswordDto: ChangePasswordDto,
+    @Request() req: any,
+  ) {
+    return this.userService.changePassword(changePasswordDto, req.user.sub);
+  }
+
+  @Post('change-email')
+  @HttpCode(HttpStatus.OK)
+  async changeEmail(
+    @Body(ValidationPipe) changeEmailDto: ChangeEmailDto,
+    @Request() req: any,
+  ) {
+    return this.userService.changeEmail(changeEmailDto, req.user.sub);
+  }
 }

@@ -2,7 +2,13 @@ import { Injectable, UnauthorizedException, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from '../users/user.schema';
 import { Model } from 'mongoose';
-import { AuthDto, AuthResponseDto, CreateUserDto } from '../dto/auth.dto';
+import {
+  AuthDto,
+  AuthResponseDto,
+  ChangeEmailDto,
+  ChangePasswordDto,
+  CreateUserDto,
+} from '../dto/auth.dto';
 import { JwtService } from '@nestjs/jwt';
 import { GlobalResponseDto } from '../dto/global-response.dto';
 import * as bcrypt from 'bcrypt';
@@ -41,7 +47,7 @@ export class AuthService {
       this.logger.error('user not found');
       throw new UnauthorizedException('Invalid email or password');
     }
-  // const isAuth = user.password === authDto.password
+    // const isAuth = user.password === authDto.password
     const isAuth = await bcrypt.compare(authDto.password, user.password);
     if (!isAuth) {
       this.logger.error('Invalid password');
