@@ -41,12 +41,18 @@ export class BookService {
   }
   async findBookById(bookId: string): Promise<Book | null> {
     this.logger.log(`Get book by id ${bookId}`);
-    return this.bookModel.findById(bookId).exec();
+    return this.bookModel.findById(bookId).populate({
+      path: 'owner',
+      select: '-password -__v -createdAt -updatedAt -_id',
+    }).exec();
   }
 
   async findAllBookByUserId(userId: string): Promise<Book[]> {
     this.logger.log(`Get all books by user id ${userId}`);
-    return this.bookModel.find({ owner: userId }).exec();
+    return this.bookModel.find({ owner: userId }).populate({
+      path: 'owner',
+      select: '-password -__v -createdAt -updatedAt -_id',
+    }).exec();
   }
 
   async deleteBookById(bookId: string): Promise<Book | null> {
