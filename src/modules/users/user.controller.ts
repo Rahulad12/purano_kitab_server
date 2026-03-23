@@ -24,10 +24,16 @@ export class UserController {
   private readonly logger = new Logger(UserController.name);
   constructor(private readonly userService: UserService) {}
 
-  @Get()
+  @Get('all-users')
   async findAllUsers(): Promise<User[]> {
     Logger.log('Get all users');
     return this.userService.findAllUsers();
+  }
+
+  @Get('me')
+  async getUserById(@Request() req: any): Promise<User> {
+    Logger.log('Get user by id');
+    return this.userService.getUserById(req.user.sub);
   }
 
   @Post('change-password')
