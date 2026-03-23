@@ -27,32 +27,68 @@ export class BookService {
     const savedBook = await createdBook.save();
     return savedBook;
   }
-  async findAllBooks(pageLimit: number, page: number): Promise<Book[]> {
+
+  async findAllBooks(
+    pageLimit: number,
+    page: number,
+    search?: string,
+    minPrice?: number,
+    maxPrice?: number,
+    author?: string,
+  ): Promise<Book[]> {
     this.logger.log('Get all books');
+
+    const query: Record<string, any> = {};
+
+    // Search by title (case-insensitive)
+    if (search) {
+      query.title = { $regex: search, $options: 'i' };
+    }
+
+    // Filter by author (case-insensitive)
+    if (author) {
+      query.author = { $regex: author, $options: 'i' };
+    }
+
+    // Filter by price range
+    if (minPrice !== undefined || maxPrice !== undefined) {
+      query.price = {};
+      if (minPrice !== undefined) query.price.$gte = minPrice;
+      if (maxPrice !== undefined) query.price.$lte = maxPrice;
+    }
+
     return this.bookModel
-      .find()
+      .find(query)
       .populate({
         path: 'owner',
         select: 'name email',
       })
-      .limit(pageLimit)
+      .sort({ createdAt: -1 })
       .skip((page - 1) * pageLimit)
+      .limit(pageLimit)
       .exec();
   }
+
   async findBookById(bookId: string): Promise<Book | null> {
     this.logger.log(`Get book by id ${bookId}`);
-    return this.bookModel.findById(bookId).populate({
-      path: 'owner',
-      select: '-password -__v -createdAt -updatedAt -_id',
-    }).exec();
+    return this.bookModel
+      .findById(bookId)
+      .populate({
+        path: 'owner',
+        select: '-password -__v -createdAt -updatedAt -_id',
+      })
+      .exec();
   }
 
   async findAllBookByUserId(userId: string): Promise<Book[]> {
     this.logger.log(`Get all books by user id ${userId}`);
-    return this.bookModel.find({ owner: userId }).populate({
-      path: 'owner',
-      select: '-password -__v -createdAt -updatedAt -_id',
-    }).exec();
+    return this.bookModel
+      .find({ owner: userId })
+      .populate({
+        path: 'owner',
+        select: '-password -__v -createdAt -updatedAt -_id',
+      })
+      .exec();
   }
 
   async deleteBookById(bookId: string): Promise<Book | null> {
@@ -60,4 +96,3 @@ export class BookService {
     return this.bookModel.findByIdAndDelete(bookId).exec();
   }
 }
-

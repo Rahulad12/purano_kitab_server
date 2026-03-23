@@ -22,12 +22,23 @@ export class BookController {
 
   @Get()
   getAllBooks(
-    @Query('pageLimit') pageLimit: number = 100,
-    @Query('page') page: number = 1,
+    @Query('page') page: string = '1',
+    @Query('limit') limit: string = '10',
+    @Query('search') search?: string,
+    @Query('author') author?: string,
+    @Query('minPrice') minPrice?: string,
+    @Query('maxPrice') maxPrice?: string,
   ): Promise<Book[]> {
-    return this.bookService.findAllBooks(pageLimit, page);
+    return this.bookService.findAllBooks(
+      Number(limit),
+      Number(page),
+      search,
+      minPrice ? Number(minPrice) : undefined,
+      maxPrice ? Number(maxPrice) : undefined,
+      author,
+    );
   }
-  
+
   @Get('/user')
   async findAllBookByUserId(@Request() req: any) {
     const userId = req.user.sub;
@@ -36,7 +47,7 @@ export class BookController {
       success: true,
       message: 'Books fetched successfully',
       books: books,
-    }
+    };
   }
 
   @Get(':id')
