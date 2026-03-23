@@ -59,23 +59,3 @@ export class AuthResponseDto {
   @ApiProperty({ type: UserResponseDto })
   user: UserResponseDto;
 }
-
-export class ChangePasswordDto {
-  @ApiProperty()
-  @IsNotEmpty()
-  currentPassword: string;
-  
-  @ApiProperty()
-  @IsNotEmpty()
-  newPassword: string;
-
-  @ApiProperty()
-  @IsNotEmpty()
-  confirmNewPassword: string;
-}
-
-export class ChangeEmailDto {
-  @ApiProperty()
-  @IsNotEmpty()
-  email: string;
-}

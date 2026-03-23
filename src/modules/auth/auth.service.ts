@@ -5,6 +5,7 @@ import { Model } from 'mongoose';
 import {
   AuthDto,
   AuthResponseDto,
+  ChangeEmailDto,
   ChangePasswordDto,
   CreateUserDto,
 } from '../dto/auth.dto';
@@ -64,69 +65,6 @@ export class AuthService {
         id: user?._id.toString(),
         phoneNumber: user?.phoneNumber,
       },
-    };
-  }
-
-  async changePassword(
-    changePasswordDto: ChangePasswordDto,
-    userId: string,
-  ): Promise<GlobalResponseDto> {
-    const user = await this.userModel.findById(userId);
-    if (!user) {
-      this.logger.error('user not found');
-      throw new UnauthorizedException('Invalid Request');
-    }
-    const isAuth = await bcrypt.compare(
-      changePasswordDto.currentPassword,
-      user.password,
-    );
- const isSamePasswordAsCurrent = await bcrypt.compare(
-      changePasswordDto.newPassword,
-      user.password,
-    );
-    if (isSamePasswordAsCurrent) {
-      this.logger.error('New password cannot be same as current password');
-      throw new UnauthorizedException(
-        'New password cannot be same as current password',
-      );
-    }
-
-    if (!isAuth) {
-      this.logger.error('Invalid password');
-      throw new UnauthorizedException('Your current password does not match');
-    }
-
-    if (changePasswordDto.newPassword !== changePasswordDto.confirmNewPassword) {
-      this.logger.error('New password and confirm password do not match');
-      throw new UnauthorizedException(
-        'New password and confirm password do not match',
-      );
-    }
-
-    user.password = await bcrypt.hash(changePasswordDto.newPassword, 10);
-    await user.save();
-    this.logger.log('Password changed successfully');
-    return {
-      statusCode: 200,
-      message: 'Password changed successfully',
-    };
-  }
-
-  async changeEmail(
-    email: string,
-    userId: string,
-  ) {
-    const user = await this.userModel.findById(userId);
-    if (!user) {
-      this.logger.error('user not found');
-      throw new UnauthorizedException('Invalid Request');
-    }
-    user.email = email;
-    await user.save();
-    this.logger.log('Email changed successfully');
-    return {
-      statusCode: 200,
-      message: 'Email changed successfully',
     };
   }
 }
