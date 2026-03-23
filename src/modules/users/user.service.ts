@@ -24,6 +24,15 @@ export class UserService {
     return this.userModel.find().exec();
   }
 
+  async getUserById(userId: string): Promise<User> {
+    const user = await this.userModel.findById(userId).select('-password -__v -createdAt -updatedAt').exec();
+    if (!user) {
+      this.logger.error('user not found');
+      throw new UnauthorizedException('Invalid Request');
+    }
+    return user;
+  }
+  
   // change password
   async changePassword(
     changePasswordDto: ChangePasswordDto,

@@ -2,11 +2,7 @@ import { Injectable, UnauthorizedException, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from '../users/user.schema';
 import { Model } from 'mongoose';
-import {
-  AuthDto,
-  AuthResponseDto,
-  CreateUserDto,
-} from '../dto/auth.dto';
+import { AuthDto, AuthResponseDto, CreateUserDto } from '../dto/auth.dto';
 import { JwtService } from '@nestjs/jwt';
 import { GlobalResponseDto } from '../dto/global-response.dto';
 import * as bcrypt from 'bcrypt';
@@ -38,14 +34,20 @@ export class AuthService {
     };
   }
 
-  async authUser(authDto: AuthDto): Promise<AuthResponseDto> {
+  async authUser(
+    authDto: AuthDto,
+  ): Promise<{ accessToken: string; user: UserDocument }> {
     this.logger.log('Auth user');
-    const user = await this.userModel.findOne({ email: authDto.email });
+
+    const user = await this.userModel
+      .findOne({ email: authDto.email })
+      .select('-password -__v -createdAt -updatedAt');
+
     if (!user) {
       this.logger.error('user not found');
       throw new UnauthorizedException('Invalid email or password');
     }
-    // const isAuth = user.password === authDto.password
+
     const isAuth = await bcrypt.compare(authDto.password, user.password);
     if (!isAuth) {
       this.logger.error('Invalid password');
@@ -53,16 +55,11 @@ export class AuthService {
     }
     const payload = { sub: user?._id, email: user?.email };
     const accessToken = this.jwtService.sign(payload);
+
     this.logger.log('User authenticated and token returned');
     return {
       accessToken,
-      user: {
-        firstName: user?.firstName,
-        lastName: user?.lastName,
-        email: user?.email,
-        id: user?._id.toString(),
-        phoneNumber: user?.phoneNumber,
-      },
+      user,
     };
   }
 }

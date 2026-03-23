@@ -46,10 +46,20 @@ export class UserResponseDto {
   email: string;
 
   @ApiProperty()
-  id: string;
+  _id: string;
 
   @ApiProperty()
   phoneNumber: string;
+
+  @ApiProperty()
+  isActive: boolean;
+
+  @ApiProperty()
+  createdAt: Date;
+
+  @ApiProperty()
+  updatedAt: Date;
+  
 }
 
 export class AuthResponseDto {
