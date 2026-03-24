@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User, UserDocument } from './user.schema';
 import {
-  ChangeEmailDto,
+  ChangeEmailOrPhoneDto,
   ChangePasswordDto,
   CreateUserDto,
 } from '../dto/create-user.dto';
@@ -25,14 +25,17 @@ export class UserService {
   }
 
   async getUserById(userId: string): Promise<User> {
-    const user = await this.userModel.findById(userId).select('-password -__v -createdAt -updatedAt').exec();
+    const user = await this.userModel
+      .findById(userId)
+      .select('-password -__v -createdAt -updatedAt')
+      .exec();
     if (!user) {
       this.logger.error('user not found');
       throw new UnauthorizedException('Invalid Request');
     }
     return user;
   }
-  
+
   // change password
   async changePassword(
     changePasswordDto: ChangePasswordDto,
@@ -82,7 +85,10 @@ export class UserService {
   }
 
   // change email
-  async changeEmail(changeEmailDto: ChangeEmailDto, userId: string) {
+  async changeEmailOrPhNumber(
+    changeEmailDto: ChangeEmailOrPhoneDto,
+    userId: string,
+  ) {
     const user = await this.userModel.findById(userId);
     if (!user) {
       this.logger.error('user not found');
@@ -96,13 +102,17 @@ export class UserService {
       this.logger.error('Invalid password');
       throw new UnauthorizedException('Invalid password');
     }
-    user.email = changeEmailDto.email;
+    if (changeEmailDto.email) {
+      user.email = changeEmailDto.email;
+    }
+    if (changeEmailDto.phoneNumber) {
+      user.phoneNumber = changeEmailDto.phoneNumber;
+    }
     await user.save();
-    this.logger.log('Email changed successfully');
+    this.logger.log('Email/Phone number changed successfully');
     return {
       statusCode: 200,
-      message: 'Email changed successfully',
+      message: 'Email/Phone number changed successfully',
     };
   }
-
 }

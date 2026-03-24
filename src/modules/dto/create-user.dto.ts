@@ -28,13 +28,17 @@ export class ChangePasswordDto {
   confirmNewPassword: string;
 }
 
-export class ChangeEmailDto {
+export class ChangeEmailOrPhoneDto {
   @ApiProperty()
   @IsNotEmpty()
-  email: string;
-
+  email?: string;
+ 
   @ApiProperty()
+  @IsNotEmpty()
+  phoneNumber?: string;
+
+
+   @ApiProperty()
   @IsNotEmpty()
   password: string;
-
 }

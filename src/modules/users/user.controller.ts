@@ -4,7 +4,6 @@ import {
   Get,
   Post,
   Logger,
-  UseGuards,
   HttpCode,
   Request,
   HttpStatus,
@@ -12,11 +11,10 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from './user.schema';
-import { ApiBody, ApiTags } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import {
-  ChangeEmailDto,
+  ChangeEmailOrPhoneDto,
   ChangePasswordDto,
-  CreateUserDto,
 } from '../dto/create-user.dto';
 ApiTags('Users');
 @Controller('users')
@@ -26,13 +24,13 @@ export class UserController {
 
   @Get('all-users')
   async findAllUsers(): Promise<User[]> {
-    Logger.log('Get all users');
+    this.logger.log('Get all users');
     return this.userService.findAllUsers();
   }
 
   @Get('me')
   async getUserById(@Request() req: any): Promise<User> {
-    Logger.log('Get user by id');
+    this.logger.log('Get user by id');
     return this.userService.getUserById(req.user.sub);
   }
 
@@ -45,12 +43,15 @@ export class UserController {
     return this.userService.changePassword(changePasswordDto, req.user.sub);
   }
 
-  @Post('change-email')
+  @Post('change-email-or-phone')
   @HttpCode(HttpStatus.OK)
-  async changeEmail(
-    @Body(ValidationPipe) changeEmailDto: ChangeEmailDto,
+  async changeEmailOrPhone(
+    @Body(ValidationPipe) changeEmailOrPhoneDto: ChangeEmailOrPhoneDto,
     @Request() req: any,
   ) {
-    return this.userService.changeEmail(changeEmailDto, req.user.sub);
+    return this.userService.changeEmailOrPhNumber(
+      changeEmailOrPhoneDto,
+      req.user.sub,
+    );
   }
 }
