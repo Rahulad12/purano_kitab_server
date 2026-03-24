@@ -41,14 +41,18 @@ export class AuthService {
 
     const user = await this.userModel
       .findOne({ email: authDto.email })
-      .select('-password -__v -createdAt -updatedAt');
+      .select(' -__v -createdAt -updatedAt');
 
     if (!user) {
       this.logger.error('user not found');
       throw new UnauthorizedException('Invalid email or password');
     }
-
-    const isAuth = await bcrypt.compare(authDto.password, user.password);
+    console.log(authDto.password, user.password);
+    const isAuth = await bcrypt.compare(
+      authDto.password,
+      user?.password as string,
+    );
+    
     if (!isAuth) {
       this.logger.error('Invalid password');
       throw new UnauthorizedException('Invalid email or password');

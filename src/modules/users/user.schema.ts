@@ -11,7 +11,7 @@ export class User {
   @Prop() lastName: string;
   @Prop() email: string;
   @Prop() phoneNumber: string;
-  @Prop() password: string;
+  @Prop() password?: string;
   @Prop({
     type: Boolean,
     default: true,
