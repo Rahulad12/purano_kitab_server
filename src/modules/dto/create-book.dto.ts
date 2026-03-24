@@ -11,4 +11,6 @@ export class CreateBookDto {
   price: string;
   @ApiProperty()
   image_url: string;
+  @ApiProperty()
+  category: string;
 }

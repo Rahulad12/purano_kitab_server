@@ -29,6 +29,7 @@ export class Book {
     default: false,
   })
   isSold?: boolean;
+  @Prop() category: string;
 }
 
 export const BookSchema = SchemaFactory.createForClass(Book);

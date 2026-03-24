@@ -6,8 +6,16 @@ import { AuthModule } from './modules/auth/auth.module';
 import { AuthGuard } from './modules/auth/auth.guard';
 import { APP_GUARD } from '@nestjs/core';
 import { FavoriteModule } from './modules/favorite/favorite.module';
+import { CategoryModule } from './modules/category/category.module';
 @Module({
-  imports: [DatabaseModule, BookModule, UserModule, AuthModule, FavoriteModule],
+  imports: [
+    DatabaseModule,
+    BookModule,
+    UserModule,
+    AuthModule,
+    FavoriteModule,
+    CategoryModule,
+  ],
   providers: [
     {
       provide: APP_GUARD,
