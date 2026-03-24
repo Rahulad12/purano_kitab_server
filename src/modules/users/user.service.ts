@@ -45,11 +45,11 @@ export class UserService {
     }
     const isAuth = await bcrypt.compare(
       changePasswordDto.currentPassword,
-      user.password,
+      user.password as string,
     );
     const isSamePasswordAsCurrent = await bcrypt.compare(
       changePasswordDto.newPassword,
-      user.password,
+      user.password as string,
     );
     if (isSamePasswordAsCurrent) {
       this.logger.error('New password cannot be same as current password');
@@ -88,7 +88,10 @@ export class UserService {
       this.logger.error('user not found');
       throw new UnauthorizedException('Invalid Request');
     }
-    const isAuth = await bcrypt.compare(changeEmailDto.password, user.password);
+    const isAuth = await bcrypt.compare(
+      changeEmailDto.password,
+      user.password as string,
+    );
     if (!isAuth) {
       this.logger.error('Invalid password');
       throw new UnauthorizedException('Invalid password');
