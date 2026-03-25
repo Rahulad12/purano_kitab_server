@@ -26,6 +26,7 @@ export class BookController {
     @Query('limit') limit: string = '10',
     @Query('search') search?: string,
     @Query('author') author?: string,
+    @Query('category') category?: string,
     @Query('minPrice') minPrice?: string,
     @Query('maxPrice') maxPrice?: string,
   ): Promise<Book[]> {
@@ -36,6 +37,7 @@ export class BookController {
       minPrice ? Number(minPrice) : undefined,
       maxPrice ? Number(maxPrice) : undefined,
       author,
+      category,
     );
   }
 
@@ -46,6 +48,17 @@ export class BookController {
     return {
       success: true,
       message: 'Books fetched successfully',
+      books: books,
+    };
+  }
+
+    //get featured books
+  @Get('featured')
+  async getFeaturedBooks() {
+    const books = await this.bookService.getFeaturedBooks();
+    return {
+      success: true,
+      message: 'Featured books fetched successfully',
       books: books,
     };
   }
@@ -83,4 +96,7 @@ export class BookController {
   deleteBookById(@Param('id') bookId: string): Promise<Book | null> {
     return this.bookService.deleteBookById(bookId);
   }
+
+
+
 }

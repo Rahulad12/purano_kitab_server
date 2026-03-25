@@ -35,6 +35,7 @@ export class BookService {
     minPrice?: number,
     maxPrice?: number,
     author?: string,
+    category?: string,
   ): Promise<Book[]> {
     this.logger.log('Get all books');
 
@@ -48,6 +49,11 @@ export class BookService {
     // Filter by author (case-insensitive)
     if (author) {
       query.author = { $regex: author, $options: 'i' };
+    }
+
+    // Filter by category
+    if (category) {
+      query.category = { $regex: category, $options: 'i' };
     }
 
     // Filter by price range
@@ -95,4 +101,42 @@ export class BookService {
     this.logger.log(`Delete book by id ${bookId}`);
     return this.bookModel.findByIdAndDelete(bookId).exec();
   }
+
+  /**
+   * Get featured books
+   * this will return book who are most favorite, like more than 5 uers
+   */
+  async getFeaturedBooks(): Promise<Book[]> {
+  this.logger.log('Get featured books');
+  try {
+    const books = await this.bookModel.aggregate([
+      {
+        $lookup: {
+          from: "favorites",
+          localField: "_id",   
+          foreignField: "book",
+          as: "favoritedBy",
+        },
+      },
+      {
+        // Only books favorited by 5 or more users
+        $match: {
+          $expr: { $gte: [{ $size: "$favoritedBy" }, 1] },
+        },
+      },
+      {
+        $project: {
+          favoritedBy: 0,
+        },
+      },
+      {
+        $sort: { favoriteCount: -1 },
+      },
+    ]);
+    return books;
+  } catch (error) {
+    this.logger.error(`Error getting featured books: ${error.message}`);
+    throw error;
+  }
+}
 }
