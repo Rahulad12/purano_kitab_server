@@ -29,4 +29,27 @@ export class FavoriteService {
   async findAllFavoritesByUser(userId: string): Promise<Favorite[]> {
     return this.favoriteModel.find({ user: userId }).exec();
   }
+  
+  async toggleFavorite(bookId: string, userId: string): Promise<{ isFavorite: boolean; favorite?: Favorite }> {
+    const existingFavBook = await this.favoriteModel.findOne({
+      user: userId,
+      book: bookId,
+    });
+
+    if (existingFavBook) {
+      await this.favoriteModel.deleteOne({ _id: existingFavBook._id });
+      return { isFavorite: false };
+    }
+
+    const createdFavBook = new this.favoriteModel({
+      user: userId,
+      book: bookId,
+    });
+    const saved = await createdFavBook.save();
+    return { isFavorite: true, favorite: saved };
+  }
+
+
 }
+
+
