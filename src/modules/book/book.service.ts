@@ -3,11 +3,15 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Book, BookDocument } from './book.schema';
 import { CreateBookDto } from '../dto/create-book.dto';
+import { Favorite, FavoriteDocument } from '../favorite/favorite.schema';
 
 @Injectable()
 export class BookService {
   private readonly logger = new Logger(BookService.name);
-  constructor(@InjectModel(Book.name) private bookModel: Model<BookDocument>) {}
+  constructor(
+    @InjectModel(Book.name) private bookModel: Model<BookDocument>,
+    @InjectModel(Favorite.name) private favoriteModel: Model<FavoriteDocument>
+  ) {}
 
   async createBook(
     bookData: Partial<CreateBookDto>,
@@ -138,5 +142,28 @@ export class BookService {
     this.logger.error(`Error getting featured books: ${error.message}`);
     throw error;
   }
+}
+/**
+ * Get Matrix of books
+ * this will return book who are most favorite, like more than 5 users
+ */
+
+async getSellerBooksMatrix(userId: string) {
+      try {
+        const Books = await this.bookModel.find({ owner: userId }).exec();
+          
+        const favoriteBooks = Books.map((book) => book._id);
+        const favoriteCount = await this.favoriteModel.countDocuments({ book: { $in: favoriteBooks } });
+
+        const soldBooks = Books.filter((book) => book.isSold === true);
+        return {
+          books: Books.length,
+          favoriteCount: favoriteCount,
+          soldBooks: soldBooks.length,
+        }
+      } catch (error) {
+        this.logger.error(`Error getting user matrix of books: ${error.message}`);
+        throw error;
+      }
 }
 }
