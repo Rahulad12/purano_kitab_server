@@ -12,5 +12,6 @@ import { AuthModule } from "../auth/auth.module";
     ],
     controllers: [FavoriteController],
     providers: [FavoriteService],
+    exports:[MongooseModule]
 })
 export class FavoriteModule {}

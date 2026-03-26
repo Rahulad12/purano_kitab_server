@@ -97,6 +97,9 @@ export class BookController {
     return this.bookService.deleteBookById(bookId);
   }
 
-
-
+  @Get('user/matrix')
+  getSellerBooksMatrix(@Request() req: any) {
+    const userId = req.user.sub;
+    return this.bookService.getSellerBooksMatrix(userId);
+  }
 }
