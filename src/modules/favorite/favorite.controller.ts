@@ -7,19 +7,36 @@ export class FavoriteController {
   private readonly logger = new Logger(FavoriteController.name);
   constructor(private readonly FavoriteService: FavoriteService) {}
 
-  @Post(':id')
-  @ApiParam({ name: 'id', description: 'Book id' })
-  async saveBookAsFavorite(@Request() req: any, @Param('id') bookId: string) {
-    this.logger.log(`Save book as favorite ${bookId} by user ${req.user.sub}`);
-    const userId = req.user.sub;
-    await this.FavoriteService.saveBookAsFavorite(bookId, userId);
+  // @Post(':id')
+  // @ApiParam({ name: 'id', description: 'Book id' })
+  // async saveBookAsFavorite(@Request() req: any, @Param('id') bookId: string) {
+  //   this.logger.log(`Save book as favorite ${bookId} by user ${req.user.sub}`);
+  //   const userId = req.user.sub;
+  //   await this.FavoriteService.saveBookAsFavorite(bookId, userId);
     
+  //   return {
+  //     success: true,
+  //     message: 'Book Saved As Favorite',
+  //   };
+  // }
+
+  @Post(':id')
+  @ApiParam({
+    name: 'id',
+    description: 'Book id',
+  })
+  async toggleFavorite(@Request() req: any, @Param('id') bookId: string) {
+    this.logger.log(`Toggle favorite ${bookId} by user ${req.user.sub}`);
+    const userId = req.user.sub;
+    const result = await this.FavoriteService.toggleFavorite(bookId, userId);
     return {
       success: true,
-      message: 'Book Saved As Favorite',
+      message: result.isFavorite ? 'Book favorited' : 'Book unfavorited',
+      favorite: result.favorite,
     };
   }
 
+  
   @Get()
   async findAllFavoritesByUser(@Request() req: any) {
     const userId = req.user.sub;
