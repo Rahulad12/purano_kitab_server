@@ -60,7 +60,7 @@ export class GoogleOAuthController {
    * This endpoint receives the authorization code from Google
    * Frontend can call this to complete the OAuth flow
    */
-  @Get('callback')
+  @Post('callback')
   @HttpCode(HttpStatus.OK)
   async handleCallback(@Body() body: { code: string }) {
     if (!body?.code) {
