@@ -62,16 +62,13 @@ export class GoogleOAuthController {
    */
   @Get('callback')
   @HttpCode(HttpStatus.OK)
-  async handleCallback(@Query('code') code: string) {
-    this.logger.log('Handling Google OAuth callback');
-
-    if (!code) {
+  async handleCallback(@Body() body: { code: string }) {
+    if (!body?.code) {
       throw new BadRequestException('Authorization code is required');
     }
-
     try {
       const { tokens, userInfo } =
-        await this.googleOAuthService.exchangeCodeForTokens(code);
+        await this.googleOAuthService.exchangeCodeForTokens(body.code);
 
       const user = await this.googleOAuthService.findOrCreateUser(
         userInfo,
