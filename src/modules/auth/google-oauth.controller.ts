@@ -10,6 +10,7 @@ import {
   UseGuards,
   Request,
   Query,
+  Res,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { GoogleOAuthService } from './google-oauth.service';
@@ -57,18 +58,17 @@ export class GoogleOAuthController {
 
   /**
    * Step 2: Handle OAuth callback and exchange code for tokens
-   * This endpoint receives the authorization code from Google
-   * Frontend can call this to complete the OAuth flow
+   * Google redirects here, then we redirect to Expo deep link
    */
-  @Post('callback')
-  @HttpCode(HttpStatus.OK)
-  async handleCallback(@Body() body: { code: string }) {
-    if (!body?.code) {
-      throw new BadRequestException('Authorization code is required');
+  @Get('callback')
+  async handleCallback(@Query('code') code: string, @Res() res: Response) {
+    if (!code) {
+      return res.redirect('puranokitab://auth/error?message=Authorization code is required');
     }
+
     try {
       const { tokens, userInfo } =
-        await this.googleOAuthService.exchangeCodeForTokens(body.code);
+        await this.googleOAuthService.exchangeCodeForTokens(code);
 
       const user = await this.googleOAuthService.findOrCreateUser(
         userInfo,
@@ -80,24 +80,13 @@ export class GoogleOAuthController {
 
       this.logger.log(`User authenticated: ${userInfo.email}`);
 
-      return {
-        statusCode: HttpStatus.OK,
-        message: 'Successfully authenticated with Google',
-        data: {
-          accessToken,
-          user: {
-            id: user._id,
-            email: user.email,
-            firstName: user.firstName,
-            lastName: user.lastName,
-          },
-        },
-      };
+      // Redirect to Expo deep link with token
+      return res.redirect(`puranokitab://auth/success?code=${accessToken}`);
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : 'Unknown error';
       this.logger.error(`Callback error: ${errorMessage}`);
-      throw error;
+      return res.redirect(`puranokitab://auth/error?message=Authentication failed`);
     }
   }
 
