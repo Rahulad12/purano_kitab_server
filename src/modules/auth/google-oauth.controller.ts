@@ -79,9 +79,9 @@ export class GoogleOAuthController {
       const accessToken = this.jwtService.sign(payload);
 
       this.logger.log(`User authenticated: ${userInfo.email}`);
-
+console.log("Ready to redirect")
       // Redirect to Expo deep link with token
-      return res.redirect(`puranokitab://auth/success?code=${accessToken}`);
+      return res.redirect(`puranokitab://auth/success?token=${accessToken}`);
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : 'Unknown error';
