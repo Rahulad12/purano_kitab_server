@@ -10,7 +10,7 @@ import { FavoriteModule } from '../favorite/favorite.module';
   imports: [
     MongooseModule.forFeature([{ name: Book.name, schema: BookSchema }]),
     AuthModule,
-    FavoriteModule
+    FavoriteModule,
   ],
   controllers: [BookController],
   providers: [BookService],

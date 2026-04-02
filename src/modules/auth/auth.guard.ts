@@ -15,14 +15,26 @@ export class AuthGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const { url, method } = request;
 
-    if (
-      (url === '/api/v1/auth/login' || url === '/api/v1/auth/register') &&
-      method === 'POST'
-    ) {
-      return true;
-    }
+    // Public authentication endpoints (no token required)
+    const publicPaths = [
+      { path: '/api/v1/auth/login', method: 'POST' },
+      { path: '/api/v1/auth/register', method: 'POST' },
+      { path: '/api/v1/auth/google/authorization-url', method: 'GET' },
+      { path: '/api/v1/auth/google/callback', method: 'GET' },
+      { path: '/api/v1/auth/google/verify-token', method: 'POST' },
+    ];
 
-    const token = this.extractTokenFromHeader(request);
+  const isPublic = publicPaths.some(
+    (route) => url.split('?')[0] === route.path && method === route.method,
+  );
+
+  if (isPublic) {
+    return true;
+  }
+
+  const token = this.extractTokenFromHeader(request);
+
+    
     if (!token) {
       throw new UnauthorizedException();
     }
@@ -30,7 +42,7 @@ export class AuthGuard implements CanActivate {
       const payload = await this.jwtService.verifyAsync(token, {
         secret: process.env.JWT_SECRET,
       });
-      request['user'] = payload;
+      request.user = payload;
     } catch {
       throw new UnauthorizedException();
     }

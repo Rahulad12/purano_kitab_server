@@ -1,6 +1,6 @@
 import * as dotenv from 'dotenv';
 dotenv.config();
-import mongoose, { Model } from 'mongoose';
+import mongoose from 'mongoose';
 import { BookSchema } from '../modules/book/book.schema';
 const books = [
   {
@@ -114,12 +114,12 @@ const seedDB = async () => {
 
     await BookModule.insertMany(books);
     console.log('Database seeded successfully');
-    mongoose.disconnect();
+    await mongoose.disconnect();
   } catch (error) {
     console.error(error);
-    mongoose.disconnect();
+    await mongoose.disconnect();
     process.exit(1);
   }
 };
 
-seedDB();
+void seedDB();

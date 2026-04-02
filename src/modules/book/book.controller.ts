@@ -3,13 +3,12 @@ import {
   Controller,
   Delete,
   Get,
-  Logger,
   Param,
   Post,
   Query,
-  Req,
   Request,
 } from '@nestjs/common';
+import { Request as ExpressRequest } from 'express';
 import { BookService } from './book.service';
 import { Book } from './book.schema';
 import { ApiBody, ApiParam, ApiTags } from '@nestjs/swagger';
@@ -42,8 +41,14 @@ export class BookController {
   }
 
   @Get('/user')
-  async findAllBookByUserId(@Request() req: any) {
-    const userId = req.user.sub;
+  async findAllBookByUserId(@Request() req: ExpressRequest) {
+    const userId = req.user?.sub;
+    if (!userId) {
+      return {
+        success: false,
+        message: 'User not authenticated',
+      };
+    }
     const books = await this.bookService.findAllBookByUserId(userId);
     return {
       success: true,
@@ -52,7 +57,7 @@ export class BookController {
     };
   }
 
-    //get featured books
+  //get featured books
   @Get('featured')
   async getFeaturedBooks() {
     const books = await this.bookService.getFeaturedBooks();
@@ -74,10 +79,16 @@ export class BookController {
     type: CreateBookDto,
   })
   async createBook(
-    @Request() req: any,
+    @Request() req: ExpressRequest,
     @Body() bookData: Partial<CreateBookDto>,
   ) {
-    const userId = req.user.sub;
+    const userId = req.user?.sub;
+    if (!userId) {
+      return {
+        message: 'User not authenticated',
+        success: false,
+      };
+    }
     if (!bookData) {
       return {
         message: 'All Fields are Required',
@@ -98,8 +109,14 @@ export class BookController {
   }
 
   @Get('user/matrix')
-  getSellerBooksMatrix(@Request() req: any) {
-    const userId = req.user.sub;
+  getSellerBooksMatrix(@Request() req: ExpressRequest) {
+    const userId = req.user?.sub;
+    if (!userId) {
+      return {
+        success: false,
+        message: 'User not authenticated',
+      };
+    }
     return this.bookService.getSellerBooksMatrix(userId);
   }
 }

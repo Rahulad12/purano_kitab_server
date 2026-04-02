@@ -2,7 +2,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Favorite, FavoriteDocument } from './favorite.schema';
 import { Model } from 'mongoose';
 import { ConflictException } from '@nestjs/common';
-Favorite;
+
 export class FavoriteService {
   constructor(
     @InjectModel(Favorite.name) private favoriteModel: Model<FavoriteDocument>,
@@ -15,7 +15,7 @@ export class FavoriteService {
     const existingFavBook = await this.favoriteModel.findOne({
       user: userId,
       book: bookId,
-    })
+    });
     if (existingFavBook) {
       throw new ConflictException('Book already favorited');
     }
@@ -29,8 +29,11 @@ export class FavoriteService {
   async findAllFavoritesByUser(userId: string): Promise<Favorite[]> {
     return this.favoriteModel.find({ user: userId }).exec();
   }
-  
-  async toggleFavorite(bookId: string, userId: string): Promise<{ isFavorite: boolean; favorite?: Favorite }> {
+
+  async toggleFavorite(
+    bookId: string,
+    userId: string,
+  ): Promise<{ isFavorite: boolean; favorite?: Favorite }> {
     const existingFavBook = await this.favoriteModel.findOne({
       user: userId,
       book: bookId,
@@ -48,8 +51,4 @@ export class FavoriteService {
     const saved = await createdFavBook.save();
     return { isFavorite: true, favorite: saved };
   }
-
-
 }
-
-

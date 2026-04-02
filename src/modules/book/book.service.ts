@@ -10,7 +10,7 @@ export class BookService {
   private readonly logger = new Logger(BookService.name);
   constructor(
     @InjectModel(Book.name) private bookModel: Model<BookDocument>,
-    @InjectModel(Favorite.name) private favoriteModel: Model<FavoriteDocument>
+    @InjectModel(Favorite.name) private favoriteModel: Model<FavoriteDocument>,
   ) {}
 
   async createBook(
@@ -62,9 +62,10 @@ export class BookService {
 
     // Filter by price range
     if (minPrice !== undefined || maxPrice !== undefined) {
-      query.price = {};
-      if (minPrice !== undefined) query.price.$gte = minPrice;
-      if (maxPrice !== undefined) query.price.$lte = maxPrice;
+      const priceQuery: Record<string, number> = {};
+      if (minPrice !== undefined) priceQuery.$gte = minPrice;
+      if (maxPrice !== undefined) priceQuery.$lte = maxPrice;
+      query.price = priceQuery;
     }
 
     return this.bookModel
@@ -111,59 +112,65 @@ export class BookService {
    * this will return book who are most favorite, like more than 5 uers
    */
   async getFeaturedBooks(): Promise<Book[]> {
-  this.logger.log('Get featured books');
-  try {
-    const books = await this.bookModel.aggregate([
-      {
-        $lookup: {
-          from: "favorites",
-          localField: "_id",   
-          foreignField: "book",
-          as: "favoritedBy",
+    this.logger.log('Get featured books');
+    try {
+      const books = await this.bookModel.aggregate([
+        {
+          $lookup: {
+            from: 'favorites',
+            localField: '_id',
+            foreignField: 'book',
+            as: 'favoritedBy',
+          },
         },
-      },
-      {
-        // Only books favorited by 5 or more users
-        $match: {
-          $expr: { $gte: [{ $size: "$favoritedBy" }, 1] },
+        {
+          // Only books favorited by 5 or more users
+          $match: {
+            $expr: { $gte: [{ $size: '$favoritedBy' }, 1] },
+          },
         },
-      },
-      {
-        $project: {
-          favoritedBy: 0,
+        {
+          $project: {
+            favoritedBy: 0,
+          },
         },
-      },
-      {
-        $sort: { favoriteCount: -1 },
-      },
-    ]);
-    return books;
-  } catch (error) {
-    this.logger.error(`Error getting featured books: ${error.message}`);
-    throw error;
+        {
+          $sort: { favoriteCount: -1 },
+        },
+      ]);
+      return books as Book[];
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+      this.logger.error(`Error getting featured books: ${errorMessage}`);
+      throw error;
+    }
   }
-}
-/**
- * Get Matrix of books
- * this will return book who are most favorite, like more than 5 users
- */
+  /**
+   * Get Matrix of books
+   * this will return book who are most favorite, like more than 5 users
+   */
 
-async getSellerBooksMatrix(userId: string) {
-      try {
-        const Books = await this.bookModel.find({ owner: userId }).exec();
-          
-        const favoriteBooks = Books.map((book) => book._id);
-        const favoriteCount = await this.favoriteModel.countDocuments({ book: { $in: favoriteBooks } });
+  async getSellerBooksMatrix(userId: string) {
+    try {
+      const Books = await this.bookModel.find({ owner: userId }).exec();
 
-        const soldBooks = Books.filter((book) => book.isSold === true);
-        return {
-          books: Books.length,
-          favoriteCount: favoriteCount,
-          soldBooks: soldBooks.length,
-        }
-      } catch (error) {
-        this.logger.error(`Error getting user matrix of books: ${error.message}`);
-        throw error;
-      }
-}
+      const favoriteBooks = Books.map((book) => book._id);
+      const favoriteCount = await this.favoriteModel.countDocuments({
+        book: { $in: favoriteBooks },
+      });
+
+      const soldBooks = Books.filter((book) => book.isSold === true);
+      return {
+        books: Books.length,
+        favoriteCount: favoriteCount,
+        soldBooks: soldBooks.length,
+      };
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+      this.logger.error(`Error getting user matrix of books: ${errorMessage}`);
+      throw error;
+    }
+  }
 }

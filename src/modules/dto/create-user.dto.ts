@@ -18,7 +18,7 @@ export class ChangePasswordDto {
   @ApiProperty()
   @IsNotEmpty()
   currentPassword: string;
-  
+
   @ApiProperty()
   @IsNotEmpty()
   newPassword: string;
@@ -32,13 +32,12 @@ export class ChangeEmailOrPhoneDto {
   @ApiProperty()
   @IsNotEmpty()
   email?: string;
- 
+
   @ApiProperty()
   @IsNotEmpty()
   phoneNumber?: string;
 
-
-   @ApiProperty()
+  @ApiProperty()
   @IsNotEmpty()
   password: string;
 }

@@ -33,15 +33,15 @@ async function bootstrap() {
   document.security = [{ 'access-token': [] }];
   SwaggerModule.setup('api/docs', app, document);
 
-//   setInterval(() => {
-//   const used = process.memoryUsage();
-//   console.log('Memory Usage:');
-//   console.log(`RSS: ${(used.rss / 1024 / 1024).toFixed(2)} MB`);
-//   console.log(`Heap Total: ${(used.heapTotal / 1024 / 1024).toFixed(2)} MB`);
-//   console.log(`Heap Used: ${(used.heapUsed / 1024 / 1024).toFixed(2)} MB`);
-//   console.log(`External: ${(used.external / 1024 / 1024).toFixed(2)} MB`);
-// }, 10000);
+  //   setInterval(() => {
+  //   const used = process.memoryUsage();
+  //   console.log('Memory Usage:');
+  //   console.log(`RSS: ${(used.rss / 1024 / 1024).toFixed(2)} MB`);
+  //   console.log(`Heap Total: ${(used.heapTotal / 1024 / 1024).toFixed(2)} MB`);
+  //   console.log(`Heap Used: ${(used.heapUsed / 1024 / 1024).toFixed(2)} MB`);
+  //   console.log(`External: ${(used.external / 1024 / 1024).toFixed(2)} MB`);
+  // }, 10000);
 
   await app.listen(process.env.PORT ?? 3000);
 }
-bootstrap();
+void bootstrap();

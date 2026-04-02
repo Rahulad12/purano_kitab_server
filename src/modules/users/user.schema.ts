@@ -13,6 +13,14 @@ export class User {
   @Prop() phoneNumber: string;
   @Prop() password?: string;
   @Prop({
+    unique: true,
+    sparse: true,
+    type: String,
+  })
+  googleId?: string;
+  @Prop()
+  googleRefreshToken?: string;
+  @Prop({
     type: Boolean,
     default: true,
   })
@@ -22,11 +30,6 @@ export class User {
     default: false,
   })
   isDeleted?: boolean;
-  @Prop({
-    unique: true,
-    type: String,
-  })
-  googleId?: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

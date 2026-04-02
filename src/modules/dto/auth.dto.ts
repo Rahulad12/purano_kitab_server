@@ -59,7 +59,6 @@ export class UserResponseDto {
 
   @ApiProperty()
   updatedAt: Date;
-  
 }
 
 export class AuthResponseDto {
