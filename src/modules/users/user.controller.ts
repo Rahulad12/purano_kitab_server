@@ -9,6 +9,7 @@ import {
   HttpStatus,
   ValidationPipe,
 } from '@nestjs/common';
+import { Request as ExpressRequest } from 'express';
 import { UserService } from './user.service';
 import { User } from './user.schema';
 import { ApiTags } from '@nestjs/swagger';
@@ -16,7 +17,8 @@ import {
   ChangeEmailOrPhoneDto,
   ChangePasswordDto,
 } from '../dto/create-user.dto';
-ApiTags('Users');
+
+@ApiTags('Users')
 @Controller('users')
 export class UserController {
   private readonly logger = new Logger(UserController.name);
@@ -29,29 +31,41 @@ export class UserController {
   }
 
   @Get('me')
-  async getUserById(@Request() req: any): Promise<User> {
+  async getUserById(@Request() req: ExpressRequest): Promise<User> {
+    const userId = req.user?.sub;
+    if (!userId) {
+      throw new Error('User not authenticated');
+    }
     this.logger.log('Get user by id');
-    return this.userService.getUserById(req.user.sub);
+    return this.userService.getUserById(userId);
   }
 
   @Post('change-password')
   @HttpCode(HttpStatus.OK)
   async changePassword(
     @Body(ValidationPipe) changePasswordDto: ChangePasswordDto,
-    @Request() req: any,
+    @Request() req: ExpressRequest,
   ) {
-    return this.userService.changePassword(changePasswordDto, req.user.sub);
+    const userId = req.user?.sub;
+    if (!userId) {
+      throw new Error('User not authenticated');
+    }
+    return this.userService.changePassword(changePasswordDto, userId);
   }
 
   @Post('change-email-or-phone')
   @HttpCode(HttpStatus.OK)
   async changeEmailOrPhone(
     @Body(ValidationPipe) changeEmailOrPhoneDto: ChangeEmailOrPhoneDto,
-    @Request() req: any,
+    @Request() req: ExpressRequest,
   ) {
+    const userId = req.user?.sub;
+    if (!userId) {
+      throw new Error('User not authenticated');
+    }
     return this.userService.changeEmailOrPhNumber(
       changeEmailOrPhoneDto,
-      req.user.sub,
+      userId,
     );
   }
 }

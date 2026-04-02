@@ -2,7 +2,7 @@ import { Injectable, UnauthorizedException, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from '../users/user.schema';
 import { Model } from 'mongoose';
-import { AuthDto, AuthResponseDto, CreateUserDto } from '../dto/auth.dto';
+import { AuthDto, CreateUserDto } from '../dto/auth.dto';
 import { JwtService } from '@nestjs/jwt';
 import { GlobalResponseDto } from '../dto/global-response.dto';
 import * as bcrypt from 'bcrypt';
@@ -51,7 +51,7 @@ export class AuthService {
       authDto.password,
       user?.password as string,
     );
-    
+
     if (!isAuth) {
       this.logger.error('Invalid password');
       throw new UnauthorizedException('Invalid email or password');
