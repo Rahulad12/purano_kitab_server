@@ -1,0 +1,37 @@
+{
+  "project_name": "purano_kitab_server",
+  "tech_stack": {
+    "framework": "nestjs",
+    "language": "typescript",
+    "database": "mongodb",
+    "orm": "mongoose",
+    "auth": ["jwt", "google_oauth"]
+  },
+  "agent_behavior": "strict",
+  "auto_commit": false,
+  "environments": {
+    "development": {
+      "port": 3001,
+      "mongodb_uri": "mongodb://localhost:27017/purano_kitab"
+    },
+    "staging": {
+      "port": 3001,
+      "mongodb_uri": "staging-mongodb-uri"
+    },
+    "production": {
+      "port": 3001,
+      "mongodb_uri": "production-mongodb-uri"
+    }
+  },
+  "api": {
+    "base_path": "/api",
+    "docs_path": "/api/docs"
+  },
+  "commands": {
+    "dev": "yarn start:dev",
+    "build": "yarn build",
+    "prod": "yarn start:prod",
+    "test": "yarn test",
+    "lint": "yarn lint"
+  }
+}
