@@ -7,8 +7,21 @@ import { AuthGuard } from './modules/auth/auth.guard';
 import { APP_GUARD } from '@nestjs/core';
 import { FavoriteModule } from './modules/favorite/favorite.module';
 import { CategoryModule } from './modules/category/category.module';
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 @Module({
   imports: [
+    ThrottlerModule.forRoot([
+      {
+        name: 'short',
+        ttl: 10000,
+        limit: 10,
+      },
+      {
+        name: 'medium',
+        ttl: 60000,
+        limit: 50,
+      },
+    ]),
     DatabaseModule,
     BookModule,
     UserModule,
@@ -20,6 +33,10 @@ import { CategoryModule } from './modules/category/category.module';
     {
       provide: APP_GUARD,
       useClass: AuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
     },
   ],
 })

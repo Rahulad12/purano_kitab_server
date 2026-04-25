@@ -24,17 +24,16 @@ export class AuthGuard implements CanActivate {
       { path: '/api/v1/auth/google/verify-token', method: 'POST' },
     ];
 
-  const isPublic = publicPaths.some(
-    (route) => url.split('?')[0] === route.path && method === route.method,
-  );
+    const isPublic = publicPaths.some(
+      (route) => url.split('?')[0] === route.path && method === route.method,
+    );
 
-  if (isPublic) {
-    return true;
-  }
+    if (isPublic) {
+      return true;
+    }
 
-  const token = this.extractTokenFromHeader(request);
+    const token = this.extractTokenFromHeader(request);
 
-    
     if (!token) {
       throw new UnauthorizedException();
     }

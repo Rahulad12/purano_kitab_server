@@ -47,9 +47,11 @@ const books = [
   {
     title: 'Atomic Habits',
     author: 'James Clear',
-    description: 'A practical guide to building good habits and breaking bad ones.',
+    description:
+      'A practical guide to building good habits and breaking bad ones.',
     price: '750',
-    image_url: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400',
+    image_url:
+      'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400',
     isAvailable: true,
     isSold: false,
     category: 'Self-Help',
@@ -57,9 +59,11 @@ const books = [
   {
     title: 'The Alchemist',
     author: 'Paulo Coelho',
-    description: 'A philosophical story about a shepherd boy chasing his dreams.',
+    description:
+      'A philosophical story about a shepherd boy chasing his dreams.',
     price: '600',
-    image_url: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400',
+    image_url:
+      'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400',
     isAvailable: true,
     isSold: false,
     category: 'Fiction',
@@ -69,7 +73,8 @@ const books = [
     author: 'Robert T. Kiyosaki',
     description: 'A book about financial literacy and investing.',
     price: '650',
-    image_url: 'https://images.unsplash.com/photo-1495446815901-a7297e633e8d?w=400',
+    image_url:
+      'https://images.unsplash.com/photo-1495446815901-a7297e633e8d?w=400',
     isAvailable: true,
     isSold: false,
     category: 'Business',
@@ -79,7 +84,8 @@ const books = [
     author: 'Cal Newport',
     description: 'Focus without distraction in a noisy world.',
     price: '720',
-    image_url: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=400',
+    image_url:
+      'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=400',
     isAvailable: true,
     isSold: false,
     category: 'Self-Help',
@@ -89,7 +95,8 @@ const books = [
     author: 'Napoleon Hill',
     description: 'Classic book about success mindset.',
     price: '550',
-    image_url: 'https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=400',
+    image_url:
+      'https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=400',
     isAvailable: true,
     isSold: false,
     category: 'Business',
@@ -99,7 +106,8 @@ const books = [
     author: 'Morgan Housel',
     description: 'How behavior affects financial decisions.',
     price: '700',
-    image_url: 'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=400',
+    image_url:
+      'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=400',
     isAvailable: true,
     isSold: false,
     category: 'Business',
@@ -109,7 +117,8 @@ const books = [
     author: 'Simon Sinek',
     description: 'Great leaders inspire by focusing on purpose.',
     price: '680',
-    image_url: 'https://images.unsplash.com/photo-1476275466078-4007374efbbe?w=400',
+    image_url:
+      'https://images.unsplash.com/photo-1476275466078-4007374efbbe?w=400',
     isAvailable: true,
     isSold: false,
     category: 'Business',
@@ -119,7 +128,8 @@ const books = [
     author: 'Stephen R. Covey',
     description: 'Principles for personal effectiveness.',
     price: '800',
-    image_url: 'https://images.unsplash.com/photo-1516979187457-637abb4f9353?w=400',
+    image_url:
+      'https://images.unsplash.com/photo-1516979187457-637abb4f9353?w=400',
     isAvailable: true,
     isSold: false,
     category: 'Self-Help',
@@ -129,7 +139,8 @@ const books = [
     author: 'Robert C. Martin',
     description: 'Guide to writing maintainable code.',
     price: '950',
-    image_url: 'https://images.unsplash.com/photo-1515879218367-8466d910aaa4?w=400',
+    image_url:
+      'https://images.unsplash.com/photo-1515879218367-8466d910aaa4?w=400',
     isAvailable: true,
     isSold: false,
     category: 'Technology',
@@ -139,7 +150,8 @@ const books = [
     author: 'Peter Thiel',
     description: 'Startup guide to building the future.',
     price: '720',
-    image_url: 'https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=400',
+    image_url:
+      'https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=400',
     isAvailable: true,
     isSold: false,
     category: 'Business',
@@ -149,7 +161,8 @@ const books = [
     author: 'Yuval Noah Harari',
     description: 'A brief history of humankind.',
     price: '850',
-    image_url: 'https://images.unsplash.com/photo-1532012197267-da84d127e765?w=400',
+    image_url:
+      'https://images.unsplash.com/photo-1532012197267-da84d127e765?w=400',
     isAvailable: true,
     isSold: false,
     category: 'Non-Fiction',
@@ -159,7 +172,8 @@ const books = [
     author: 'Eric Ries',
     description: 'How today entrepreneurs use continuous innovation.',
     price: '700',
-    image_url: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=400',
+    image_url:
+      'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=400',
     isAvailable: true,
     isSold: false,
     category: 'Business',
@@ -172,7 +186,7 @@ const migrate = async () => {
     if (!uri) {
       throw new Error('DATABASE_URI not found in environment');
     }
-    
+
     await mongoose.connect(uri);
     console.log('Connected to MongoDB');
 
@@ -181,9 +195,18 @@ const migrate = async () => {
     const Book = mongoose.model('books', BookSchema);
 
     const db = mongoose.connection.db as any;
-    await db.collection('users').drop().catch(() => {});
-    await db.collection('categories').drop().catch(() => {});
-    await db.collection('books').drop().catch(() => {});
+    await db
+      .collection('users')
+      .drop()
+      .catch(() => {});
+    await db
+      .collection('categories')
+      .drop()
+      .catch(() => {});
+    await db
+      .collection('books')
+      .drop()
+      .catch(() => {});
     console.log('Dropped existing collections');
 
     const createdUsers: any[] = [];
@@ -197,7 +220,7 @@ const migrate = async () => {
     console.log(`Created ${createdCategories.length} categories`);
 
     const categoryMap = new Map(
-      createdCategories.map((c: any) => [c.category, c._id])
+      createdCategories.map((c: any) => [c.category, c._id]),
     );
 
     const booksWithOwners = books.map((book, index) => ({

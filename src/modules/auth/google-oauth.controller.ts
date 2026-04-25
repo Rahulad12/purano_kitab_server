@@ -63,7 +63,9 @@ export class GoogleOAuthController {
   @Get('callback')
   async handleCallback(@Query('code') code: string, @Res() res: Response) {
     if (!code) {
-      return res.redirect('puranokitab://auth/error?message=Authorization code is required');
+      return res.redirect(
+        'puranokitab://auth/error?message=Authorization code is required',
+      );
     }
 
     try {
@@ -79,14 +81,16 @@ export class GoogleOAuthController {
       const accessToken = this.jwtService.sign(payload);
 
       this.logger.log(`User authenticated: ${userInfo.email}`);
-console.log("Ready to redirect")
+      console.log('Ready to redirect');
       // Redirect to Expo deep link with token
       return res.redirect(`puranokitab://auth/success?token=${accessToken}`);
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : 'Unknown error';
       this.logger.error(`Callback error: ${errorMessage}`);
-      return res.redirect(`puranokitab://auth/error?message=Authentication failed`);
+      return res.redirect(
+        `puranokitab://auth/error?message=Authentication failed`,
+      );
     }
   }
 

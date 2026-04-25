@@ -1,13 +1,21 @@
+import 'reflect-metadata';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ConsoleLogger } from '@nestjs/common';
+import { AppConfig } from './shared/config';
+import { HttpExceptionFilter } from './shared/filters';
 async function bootstrap() {
+  const logger = new ConsoleLogger('Bootstrap');
+
+  await AppConfig.validateConfig();
+  logger.log('Environment configuration validated');
   const app = await NestFactory.create(AppModule, {
     logger: new ConsoleLogger({
       prefix: 'Purano Kitab',
     }),
   });
+  app.useGlobalFilters(new HttpExceptionFilter());
   app.enableCors({
     origin: '*',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
